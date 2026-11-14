@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global & Regional Climate Projections</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://unpkg.com/topojson-client@3"></script>
+</head>
+<body>
+
+    <header>
+        <h1>Global & Regional Climate Projections</h1>
+        <p class="subtitle">Interactive climate visualization exploring CMIP6 near-surface air temperature anomalies in relation to the 1850–1900 baseline.</p>
+    </header>
+
+    <main>
+
+        <section class="vis-card">
+            <h2>1. Select a Region on the Map</h2>
+            <p class="instruction">Click any region below to load its corresponding temperature anomaly line graph.</p>
+            <div id="map-container"></div>
+        </section>
+
+
+        <section class="vis-card">
+            <h2 id="chart-title">2. Temperature Anomaly Trajectory: North America</h2>
+            <div id="chart-container"></div>
+        </section>
+    </main>
+
+    <section id="writeup">
+        <h2>Design Rationale & Development Process</h2>
+        <p>This visualization . . .</p>
+    </section>
+
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>

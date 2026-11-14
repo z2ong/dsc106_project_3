@@ -1,0 +1,91 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f4f6f8;
+    color: #2c3e50;
+}
+
+header, .vis-card, #writeup {
+    max-width: 900px;
+    margin: 0 auto 20px auto;
+    background: #ffffff;
+    padding: 22px 28px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+h1 { 
+    margin-top: 0; 
+    font-size: 1.6rem; 
+    color: #1a252f;
+}
+
+h2 { 
+    margin-top: 0; 
+    font-size: 1.15rem; 
+    color: #34495e; 
+}
+
+.subtitle { 
+    color: #5f6c7b; 
+    margin-bottom: 0; 
+}
+
+.instruction { 
+    font-size: 0.9rem; 
+    color: #666; 
+    margin-top: -5px; 
+    margin-bottom: 15px; 
+}
+
+
+#map-container, #chart-container {
+    display: flex;
+    justify-content: center;
+}
+
+
+.land {
+    fill: #e2e8f0;
+    stroke: #ffffff;
+    stroke-width: 0.5px;
+}
+
+.region-box {
+    fill: rgba(43, 92, 143, 0.12);
+    stroke: #2b5c8f;
+    stroke-width: 1.5px;
+    cursor: pointer;
+    transition: fill 0.2s ease, stroke-width 0.2s ease;
+}
+
+.region-box:hover {
+    fill: rgba(43, 92, 143, 0.28);
+    stroke-width: 2px;
+}
+
+.region-box.active {
+    fill: rgba(214, 39, 40, 0.2);
+    stroke: #d62728;
+    stroke-width: 2.5px;
+}
+
+.region-label {
+    font-size: 11px;
+    font-weight: 600;
+    fill: #1e293b;
+    pointer-events: none;
+    text-anchor: middle;
+}
+
+
+.line {
+    fill: none;
+    stroke-width: 2.5px;
+}
+
+.axis-label {
+    font-size: 12px;
+    fill: #555;
+}
