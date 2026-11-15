@@ -111,7 +111,10 @@ async function init() {
                 return `translate(${geoPath.centroid(d)})`;
             })
             .text(d => d.properties.name);
-
+        
+            d3.select("#scenario-filter").on("change", () => {
+            updateChart(data);
+        });
         updateChart(data);
 
     } catch (error) {
@@ -121,7 +124,15 @@ async function init() {
 
 function updateChart(data) {
     const regionData = data.filter(d => d.region === currentRegion);
-    const nestedData = d3.group(regionData, d => d.scenario);
+    const selectedScenario = d3.select("#scenario-filter").property("value");
+
+const visibleRows = regionData.filter(d =>
+    d.scenario === "historical" ||
+    selectedScenario === "both" ||
+    d.scenario === selectedScenario
+);
+
+const nestedData = d3.group(visibleRows, d => d.scenario);
 
     chartSvg.selectAll(".rendered-element").remove();
 
@@ -243,7 +254,7 @@ function updateChart(data) {
         .attr("class", "rendered-element")
         .attr("transform", `translate(${width + 15}, 10)`);
 
-    ["historical", "ssp126", "ssp585"].forEach((scen, i) => {
+    [...nestedData.keys()].forEach((scen, i) => {
         const row = legend.append("g").attr("transform", `translate(0, ${i * 22})`);
         row.append("rect").attr("width", 12).attr("height", 12).attr("fill", color(scen));
         row.append("text").attr("x", 18).attr("y", 10).style("font-size", "12px").text(scen);
