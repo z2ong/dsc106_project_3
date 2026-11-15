@@ -103,3 +103,78 @@ h2 {
     z-index: 10;
     line-height: 1.6;
 }
+
+body {
+    padding: 0;
+    background: #f3f7f5;
+    color: #172d30;
+}
+
+header {
+    max-width: none;
+    margin: 0 0 24px;
+    padding: 36px max(24px, calc((100vw - 960px) / 2));
+    background: #113b3d;
+    border-bottom: 4px solid #8bbdaf;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+header h1 {
+    margin: 0 0 10px;
+    font: 400 clamp(2.4rem, 6vw, 4.5rem)/1.05 Georgia, serif;
+    color: #f5f8f2;
+}
+
+header .subtitle {
+    max-width: 55ch;
+    line-height: 1.5;
+    color: #d4e8e0;
+}
+
+.vis-card, #writeup {
+    margin-inline: auto;
+    width: calc(100% - 32px);
+    box-sizing: border-box;
+    border: 1px solid #d6e2de;
+    border-radius: 14px;
+    box-shadow: none;
+}
+
+.vis-card table {
+    width: 100%;
+    margin-top: 18px;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+}
+
+.vis-card caption {
+    margin-bottom: 8px;
+    text-align: left;
+    color: #486064;
+}
+
+.vis-card th, .vis-card td {
+    padding: 9px 10px;
+    border-bottom: 1px solid #d6e2de;
+    text-align: right;
+}
+
+.vis-card th:first-child {
+    text-align: left;
+}
+
+#comparison-rows button {
+    padding: 5px 8px;
+    border: 0;
+    border-radius: 5px;
+    background: #eaf3f0;
+    color: #14534d;
+    font: inherit;
+    cursor: pointer;
+}
+
+#comparison-rows button:hover,
+#comparison-rows button:focus-visible {
+    background: #cde6dd;
+}
