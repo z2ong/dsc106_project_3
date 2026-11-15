@@ -27,20 +27,42 @@
             <div id="map-container"></div>
         </section>
 
-
+<div class="results-grid">
         <section class="vis-card">
             <h2 id="chart-title">2. Temperature Anomaly Trajectory: North America</h2>
-            <label for="scenario-filter">Future scenarios</label>
-<select id="scenario-filter">
-    <option value="both">Compare both</option>
-    <option value="ssp126">Lower emissions</option>
-    <option value="ssp585">Higher emissions</option>
-</select>
-<label for="time-span">Time span</label>
-<select id="time-span">
-    <option value="all">1850–2100 · Full record</option>
-    <option value="future">2015–2100 · Projections only</option>
-</select>
+<div class="chart-controls">
+    <fieldset class="segmented">
+        <legend>Future scenarios</legend>
+        <div class="segments">
+            <label>
+                <input type="radio" name="scenario-filter" value="both" checked>
+                <span>Compare both</span>
+            </label>
+            <label>
+                <input type="radio" name="scenario-filter" value="ssp126">
+                <span>Lower emissions</span>
+            </label>
+            <label>
+                <input type="radio" name="scenario-filter" value="ssp585">
+                <span>Higher emissions</span>
+            </label>
+        </div>
+    </fieldset>
+
+    <fieldset class="segmented">
+        <legend>Time span</legend>
+        <div class="segments">
+            <label>
+                <input type="radio" name="time-span" value="all" checked>
+                <span>Full record</span>
+            </label>
+            <label>
+                <input type="radio" name="time-span" value="future">
+                <span>Projections only</span>
+            </label>
+        </div>
+    </fieldset>
+</div>
             <div id="chart-container"></div>
         </section>
         <section class="vis-card">
@@ -65,6 +87,7 @@
     <tbody id="comparison-rows"></tbody>
 </table>
 </section>
+ </div>
     </main>
 
     <section id="writeup">

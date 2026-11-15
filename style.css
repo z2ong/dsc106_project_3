@@ -61,13 +61,14 @@ h2 {
 }
 
 .region-box:hover {
-    fill: rgba(43, 92, 143, 0.28);
+    fill: rgba(58, 157, 120, 0.22);
+    stroke: #3a9d78;
     stroke-width: 2px;
 }
 
 .region-box.active {
-    fill: rgba(214, 39, 40, 0.2);
-    stroke: #d62728;
+    fill: rgba(17, 87, 66, 0.38);
+    stroke: #115742;
     stroke-width: 2.5px;
 }
 
@@ -229,4 +230,105 @@ header .subtitle {
 .vis-card select:focus-visible {
     outline: 2px solid #147365;
     outline-offset: 3px;
+}
+
+.chart-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    margin-bottom: 12px;
+}
+
+.segmented {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.segmented legend {
+    margin-bottom: 5px;
+    color: #294749;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.segments {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 3px;
+    padding: 3px;
+    border: 1px solid #d6e2de;
+    border-radius: 9px;
+    background: #edf3f0;
+}
+
+.segments label {
+    position: relative;
+    cursor: pointer;
+}
+
+.segments input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+.segments span {
+    display: block;
+    padding: 8px 11px;
+    border-radius: 6px;
+}
+
+.segments input:checked + span {
+    background: #113b3d;
+    color: #fff;
+}
+
+.segments input:focus-visible + span {
+    outline: 2px solid #147365;
+    outline-offset: 2px;
+}
+
+.results-grid {
+    width: min(1200px, calc(100% - 32px));
+    margin: 0 auto 20px;
+    display: grid;
+    gap: 16px;
+    align-items: start;
+}
+
+.results-grid > .vis-card {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin: 0;
+}
+
+#chart-container svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+@media (min-width: 1050px) {
+    .results-grid {
+        grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    }
+}
+
+@media (min-width: 1050px) {
+    .results-grid {
+        align-items: stretch;
+    }
+
+    .results-grid th,
+    .results-grid td {
+        padding: 5px 8px;
+    }
+
+    .results-grid td {
+        white-space: nowrap;
+    }
 }

@@ -5,7 +5,7 @@ const mapHeight = 360;
 
 const margin = { top: 25, right: 100, bottom: 45, left: 60 };
 const width = 860 - margin.left - margin.right;
-const height = 360 - margin.top - margin.bottom;
+const height = 450 - margin.top - margin.bottom;
 
 const mapSvg = d3.select("#map-container")
     .append("svg")
@@ -20,8 +20,7 @@ const geoPath = d3.geoPath().projection(projection);
 
 const chartSvg = d3.select("#chart-container")
     .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
+    .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
     .append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
 
@@ -180,11 +179,10 @@ renderComparison();
                 return `translate(${geoPath.centroid(d)})`;
             })
             .text(d => d.properties.name);
-        
-            d3.selectAll("#scenario-filter, #time-span").on("change", () => {
-    updateChart(data);
-        });
-        updateChart(data);
+                d3.selectAll('input[name="scenario-filter"], input[name="time-span"]')
+            .on("change", () => updateChart(data));
+
+        selectRegion(currentRegion);
 
     } catch (error) {
         console.error("Error loading dataset or map:", error);
@@ -193,10 +191,13 @@ renderComparison();
 
 function updateChart(data) {
     const regionData = data.filter(d => d.region === currentRegion);
-    const selectedScenario = d3.select("#scenario-filter").property("value");
+    const selectedScenario = d3.select('input[name="scenario-filter"]:checked')
+    .property("value");
+
+const projectionsOnly = d3.select('input[name="time-span"]:checked')
+    .property("value") === "future";
 
 const [firstYear, lastYear] = d3.extent(regionData, d => d.year);
-const projectionsOnly = d3.select("#time-span").property("value") === "future";
 const startYear = projectionsOnly ? 2015 : firstYear;
 
 const visibleRows = regionData.filter(d =>
