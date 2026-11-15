@@ -13,7 +13,7 @@ const mapSvg = d3.select("#map-container")
     .attr("height", mapHeight);
 
 const projection = d3.geoEquirectangular()
-    .scale(135)
+    .scale((mapHeight - 12) / Math.PI)
     .translate([mapWidth / 2, mapHeight / 2]);
 
 const geoPath = d3.geoPath().projection(projection);
@@ -31,6 +31,14 @@ const color = d3.scaleOrdinal()
     .domain(["historical", "ssp126", "ssp585"])
     .range(["#4682B4", "#FF8C00", "#db5d9c"]);
 
+const scenarioNames = {
+    historical: "Historical",
+    ssp126: "SSP1-2.6",
+    ssp585: "SSP5-8.5"
+};
+const formatAnomaly = d3.format("+.2f");
+let selectedYear = 2100;
+
 const regionBounds = [
     { name: "North America", lon: [-170, -50], lat: [15, 75] },
     { name: "South America", lon: [-90, -35],   lat: [-56, 12] },
@@ -42,23 +50,6 @@ const regionBounds = [
     { name: "Arctic",        lon: [-180, 180], lat: [65, 89.5] },
     { name: "Antarctica",    lon: [-180, 180], lat: [-89.5, -60] }
 ];
-
-function makeRegionPolygon(region) {
-    const [lonMin, lonMax] = region.lon;
-    const [latMin, latMax] = region.lat;
-
-    const topEdge = d3.range(lonMin, lonMax + 1, 5).map(lon => [lon, latMax]);
-    const bottomEdge = d3.range(lonMax, lonMin - 1, -5).map(lon => [lon, latMin]);
-    const coordinates = [[...topEdge, ...bottomEdge, topEdge[0]]];
-
-    return {
-        type: "Feature",
-        properties: { name: region.name },
-        geometry: { type: "Polygon", coordinates: coordinates }
-    };
-}
-
-const regionFeatures = regionBounds.map(makeRegionPolygon);
 
 let currentRegion = "North America";
 
@@ -80,21 +71,39 @@ async function init() {
             .attr("class", "land")
             .attr("d", geoPath);
 
+        // Draw each study box directly in the rectangular projection.
+        // Put the full-width polar bands behind the smaller study boxes.
+        const mapOrder = [...regionBounds].sort((a, b) =>
+            d3.descending(a.lon[1] - a.lon[0], b.lon[1] - b.lon[0])
+        );
         const regionPaths = mapSvg.append("g")
-            .selectAll("path")
-            .data(regionFeatures)
-            .join("path")
-            .attr("class", d => `region-box ${d.properties.name === currentRegion ? "active" : ""}`)
-            .attr("d", geoPath)
-            .on("click", (event, d) => {
-                currentRegion = d.properties.name;
-                regionPaths.classed("active", r => r.properties.name === currentRegion);
+            .selectAll("rect")
+            .data(mapOrder)
+            .join("rect")
+            .attr("class", "region-box")
+            .classed("active", d => d.name === currentRegion)
+            .attr("aria-label", d => d.name)
+            .attr("x", d => projection([d.lon[0], d.lat[1]])[0])
+            .attr("y", d => projection([d.lon[0], d.lat[1]])[1])
+            .attr("width", d => (d.lon[1] - d.lon[0]) * Math.PI / 180 * projection.scale())
+            .attr("height", d => (d.lat[1] - d.lat[0]) * Math.PI / 180 * projection.scale())
+            .attr("role", "button")
+            .attr("tabindex", 0)
+            .attr("aria-pressed", d => String(d.name === currentRegion))
+            .on("click keydown", (event, d) => {
+                if (event.type === "keydown") {
+                    if (event.key !== "Enter" && event.key !== " ") return;
+                    event.preventDefault();
+                }
+                currentRegion = d.name;
+                regionPaths.classed("active", r => r.name === currentRegion)
+                    .attr("aria-pressed", r => String(r.name === currentRegion));
                 d3.select("#chart-title").text(`2. Temperature Anomaly Trajectory: ${currentRegion}`);
                 updateChart(data);
             })
             .on("mouseover", (event, d) => {
                 tooltip.transition().duration(100).style("opacity", 0.95);
-                tooltip.html(`Click to view <strong>${d.properties.name}</strong>`)
+                tooltip.text(`Click to view ${d.name}`)
                     .style("left", (event.pageX + 10) + "px")
                     .style("top", (event.pageY - 25) + "px");
             })
@@ -102,15 +111,13 @@ async function init() {
 
         mapSvg.append("g")
             .selectAll("text")
-            .data(regionFeatures)
+            .data(regionBounds)
             .join("text")
             .attr("class", "region-label")
-            .attr("transform", d => {
-                if (d.properties.name === "Arctic") return `translate(${projection([-30, 70])})`;
-                if (d.properties.name === "Antarctica") return `translate(${projection([0, -70])})`;
-                return `translate(${geoPath.centroid(d)})`;
-            })
-            .text(d => d.properties.name);
+            .attr("transform", d => `translate(${projection([
+                d3.mean(d.lon), d.name === "Arctic" ? 81 : d3.mean(d.lat)
+            ])})`)
+            .text(d => d.name);
 
         updateChart(data);
 
@@ -130,8 +137,9 @@ function updateChart(data) {
         .range([0, width]);
 
     const y = d3.scaleLinear()
-        .domain([-2, 12])
-        .range([height, 0]);
+        .domain(d3.extent(data, d => d.tas_anomaly))
+        .range([height, 0])
+        .nice();
 
     chartSvg.append("g")
         .attr("class", "rendered-element")
@@ -176,8 +184,44 @@ function updateChart(data) {
     ["historical", "ssp126", "ssp585"].forEach((scen, i) => {
         const row = legend.append("g").attr("transform", `translate(0, ${i * 22})`);
         row.append("rect").attr("width", 12).attr("height", 12).attr("fill", color(scen));
-        row.append("text").attr("x", 18).attr("y", 10).style("font-size", "12px").text(scen);
+        row.append("text").attr("x", 18).attr("y", 10).style("font-size", "12px").text(scenarioNames[scen]);
     });
+
+    const valuesByYear = d3.group(regionData, d => d.year);
+    const [firstYear, lastYear] = x.domain();
+    const yearInput = d3.select("#inspect-year").attr("min", firstYear).attr("max", lastYear);
+    const guide = chartSvg.append("g").attr("class", "rendered-element year-guide");
+    const cursor = guide.append("line").attr("y2", height);
+    const dots = guide.append("g");
+
+    function inspectYear(year) {
+        selectedYear = Math.max(firstYear, Math.min(lastYear, year));
+        const rows = valuesByYear.get(selectedYear) ?? [];
+        const label = d => `${scenarioNames[d.scenario]} ${formatAnomaly(d.tas_anomaly)} °C`;
+
+        yearInput.property("value", selectedYear)
+            .attr("aria-valuetext", [selectedYear, ...rows.map(label)].join(", "));
+        d3.select("#selected-year").text(selectedYear);
+        d3.select("#year-values").selectAll("span").data(rows, d => d.scenario)
+            .join("span").text(label);
+
+        cursor.attr("x1", x(selectedYear)).attr("x2", x(selectedYear));
+        dots.selectAll("circle").data(rows, d => d.scenario).join("circle")
+            .attr("cx", x(selectedYear)).attr("cy", d => y(d.tas_anomaly))
+            .attr("r", 4).attr("fill", d => color(d.scenario));
+    }
+
+    chartSvg.append("rect").attr("class", "rendered-element year-hit-area")
+        .attr("width", width).attr("height", height).attr("fill", "transparent")
+        .on("pointermove pointerdown", event => {
+            if (event.type === "pointermove" && event.pointerType === "touch") return;
+            const [pointerX] = d3.pointer(event, chartSvg.node());
+            inspectYear(Math.round(x.invert(pointerX)));
+        });
+
+    yearInput.on("input", event => inspectYear(event.target.valueAsNumber));
+    d3.select(".year-inspector").property("hidden", false);
+    inspectYear(selectedYear);
 }
 
 init();

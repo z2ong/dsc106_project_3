@@ -89,3 +89,69 @@ h2 {
     font-size: 12px;
     fill: #555;
 }
+
+.year-inspector {
+    max-width: 740px;
+    margin: 0 auto;
+}
+
+.year-inspector label {
+    font-weight: 600;
+}
+
+#inspect-year {
+    display: block;
+    width: 100%;
+    margin: 6px 0 10px;
+    accent-color: #2b5c8f;
+}
+
+.year-values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-variant-numeric: tabular-nums;
+}
+
+.year-values span {
+    background: #e9eff5;
+    border-radius: 4px;
+    padding: 4px 8px;
+}
+
+.year-guide {
+    pointer-events: none;
+}
+
+.year-guide line {
+    stroke: #475569;
+    stroke-dasharray: 3 3;
+}
+
+.year-guide circle {
+    stroke: #fff;
+    stroke-width: 1.5px;
+}
+
+.year-hit-area {
+    cursor: crosshair;
+    touch-action: pan-y;
+}
+
+.region-box:focus-visible {
+    stroke: #1a252f;
+    stroke-width: 3px;
+}
+
+.tooltip {
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: #fff;
+    color: #1a252f;
+    box-shadow: 0 1px 5px #1a252f38;
+    font-size: 13px;
+}

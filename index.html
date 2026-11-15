@@ -27,7 +27,13 @@
 
         <section class="vis-card">
             <h2 id="chart-title">2. Temperature Anomaly Trajectory: North America</h2>
+            <p id="year-instructions" class="instruction">Move across the chart or use the slider to inspect a year.</p>
             <div id="chart-container"></div>
+            <div class="year-inspector" hidden>
+                <label for="inspect-year">Year <output id="selected-year" for="inspect-year"></output></label>
+                <input id="inspect-year" type="range" step="1" aria-describedby="year-instructions">
+                <div id="year-values" class="year-values"></div>
+            </div>
         </section>
     </main>
 
