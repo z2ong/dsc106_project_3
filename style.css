@@ -332,3 +332,11 @@ header .subtitle {
         white-space: nowrap;
     }
 }
+
+main > .vis-card,
+.results-grid,
+#writeup {
+    width: min(1200px, calc(100% - 32px));
+    max-width: none;
+    margin-inline: auto;
+}
