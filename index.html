@@ -91,32 +91,27 @@
     </main>
 
     <section id="writeup">
-        <h2>Design Rationale & Development Process</h2>
-        <p>
-            Our team's focus question was, how does projected warming differ across selected regions under lower- and higher-emissions scenarios? 
-            Our main motivation behind developing a visualization for this question, was to highlight clearly the historical climate data and climate 
-            prediction data trends, filtering regionally in a manner that was easy to follow. We observed that climate change isn't just a universal increase 
-            in temperature, but is a non-uniform difference in regional climate. If you skim through our visualization you will see that the Arctic has a significant 
-            difference in predicted temperature anomaly comparatively to other regions regardless of low or high emission scenarios.
-        </p>
-        <p>
-            Instead of making the user select regions through a simple drop down, we wanted to make it more interactive by adding map for users to
-            select regions for individual filtering. Users can click on the designated boxes meant to represent each region making the analysis of
-            climate data more engaging. Just below the map, you will see the highlighted temperature anomaly line graph (filterable) highlighting the 
-            difference of that region's average temperature from the baseline average we calculated from the historical 1850-1900 climate data. We used
-            line charts to more clearly show the continuous trend and the future difference of in predicted scenarios based on levels of emission. For 
-            the color palette, we decided to use a lightish monotone blue for historical data, a darker orange for ssp126 data, and a magenta for ssp585 data 
-            to highlight the differences in each scenario. We figured that since blue and orange are on opposing side of the color wheel they would make 
-            good contrast. On top of that magenta was between them so our color palette was both visually appealing, but also differing enough to 
-            combat color blindess, at least specifically the most common one, red-green blindness.
-        </p>
-        <p>
-            We sourced our data from the CMIP6 dataset aggregating and filtering for the specific historical and projection data, including longitudinal,
-            temperature, and latitudinal data. We formed our visualization by first thinking of how to allow users to select the regions they wanted to see.
-            We then highlighted the differences through line charts for simple viewing. To conclude our guided exploration of these climate trends, we implemented a table
-            to compare specific pockets of years worth of simulated averages of regional temperature data in case the line graphs weren't specific enough,
-            despite the use of a tooltip to show the year's temperature anomaly data.
-        </p>
+        <h2>Design Rationale</h2>
+            <p>
+            Our team's focus question was: <strong>How does projected warming differ across selected regions under lower- and higher-emissions scenarios?</strong> Our main motivation was to clearly highlight both historical climate trends and future climate projections while allowing users to explore regional differences in a way that was easy to follow. During our brainstorming process, we looked at several climate and weather visualizations and considered whether to focus mainly on a geographic map or a time-series line chart. We observed that climate change is not simply a uniform increase in temperature, but varies significantly across regions. For example, our visualization shows that the Arctic has a much larger projected temperature anomaly than many other regions under both lower- and higher-emissions scenarios.
+            </p>
+            <p>
+            Instead of making users select regions through a simple dropdown, we wanted the interaction to feel more direct and engaging, so we added a map where users can click on the designated boxes representing each region. A map provides useful geographic context, while the line chart below is more effective for showing continuous changes over time, so we decided to combine both rather than choosing only one. Once a region is selected, the temperature anomaly line chart updates to show how that region's average temperature differs from the 1850–1900 historical baseline. We also added scenario and time-span controls so users can compare both projections together or focus on a specific emissions pathway or period. We considered displaying all regions in a single line chart, but this created too much visual clutter and made individual regional comparisons harder to follow.
+            </p>
+            <p>
+            For the visual encoding, we used a light blue tone for historical data, a darker orange for SSP1-2.6, and magenta for SSP5-8.5 so that the historical period and two projection scenarios are easy to distinguish. The contrasting colors help users quickly recognize where the lower- and higher-emissions projections begin to diverge. To conclude the guided exploration, we added a regional comparison table that summarizes average temperature anomalies over selected projection periods. While the line chart and tooltip help users explore trends and individual years, the table provides more precise numerical comparisons between regions and makes the scenario gap easier to identify. Together, the map, line chart, filters, tooltip, and comparison table allow users to explore the data from geographic, temporal, and numerical perspectives while keeping the overall visualization focused on our research question.
+            </p>
+
+        <h2>Development Process</h2>
+            <p>
+            We sourced our data from the CMIP6 climate dataset and processed the historical and projected temperature data by filtering relevant latitude and longitude ranges for each region. We calculated regional temperature anomalies relative to the 1850–1900 historical baseline and organized the data so that it could be used consistently across the map, line chart, and comparison table.
+            </p>
+            <p>
+            Our team divided the work across the main components of the project. <strong>Zach</strong> built the overall website framework and implemented the main map and temperature anomaly line chart. He developed the core interaction that connects regional selection on the map with the corresponding line plot. He also contributed to write-up section. <strong>May</strong> added the regional comparison table, improved the overall page styling, and implemented several of the dropdown and filtering features that allow users to change the projection period and scenario view. <strong>Yimeng</strong> worked on the written explanation and design rationale, and also helped refine and optimize the plot interactions so that the visualization was easier to explore and interpret.
+            </p>
+            <p>
+            Our development process was iterative: we first built the major visual components, then connected the interactions and added comparison features, and finally refined the styling and usability. The most time-consuming parts were deciding how to present the climate data without overwhelming the user, coordinating the interactions between components, and improving the final visual design. Overall, the project required collaboration across data processing, visualization design, interaction development, and webpage styling.
+            </p>
     </section>
 
 
