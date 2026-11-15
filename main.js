@@ -169,6 +169,76 @@ function updateChart(data) {
             .attr("d", line);
     }
 
+    const hoverLine = chartSvg.append("line")
+        .attr("class", "rendered-element")
+        .attr("y1", 0)
+        .attr("y2", height)
+        .attr("stroke", "#555")
+        .attr("stroke-dasharray", "4,4")
+        .style("opacity", 0);
+
+    chartSvg.append("rect")
+        .attr("class", "rendered-element")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("fill", "transparent")
+        .style("pointer-events", "all")
+        .on("mousemove", function(event) {
+            const mouseX = d3.pointer(event, this)[0];
+            const hoverYear = x.invert(mouseX);
+            hoverLine
+                .attr("x1", mouseX)
+                .attr("x2", mouseX)
+                .style("opacity", 1);
+            
+            let tooltipContent = `<strong>Year: ${Math.round(hoverYear)}</strong><br>`;
+
+            const scenarioNames = {
+                historical: "Historical",
+                ssp126: "Lower Emissions (SSP1-2.6)",
+                ssp585: "Higher Emissions (SSP5-8.5)"
+            };
+
+            for (let [scenario, values] of nestedData) {
+
+                if (hoverYear < 2014 && scenario !== "historical") {
+                    continue;
+                }
+
+                if (hoverYear >= 2014 && scenario === "historical") {
+                    continue;
+                }
+
+                const bisect = d3.bisector(d => d.year).center;
+                const index = bisect(values, hoverYear);
+                const point = values[index];
+
+                const temperatureC = point.tas - 273.15;
+
+                tooltipContent += `
+                    <div style="color: ${color(scenario)}">
+                        <strong>${scenarioNames[scenario] || scenario}</strong>
+                    </div>
+
+                    <div>
+                        Data year: ${point.year}<br>
+                        Temperature anomaly: ${point.tas_anomaly.toFixed(2)} °C<br>
+                        Mean temperature: ${temperatureC.toFixed(2)} °C
+                    </div>
+                    <br>
+                `;
+            }
+            tooltip
+                .html(tooltipContent)
+                .style("left", (event.pageX + 15) + "px")
+                .style("top", (event.pageY - 15) + "px")
+                .style("opacity", 1);
+        })
+        .on("mouseout", function() {
+            tooltip.style("opacity", 0);
+            hoverLine.style("opacity", 0);
+        });
+
     const legend = chartSvg.append("g")
         .attr("class", "rendered-element")
         .attr("transform", `translate(${width + 15}, 10)`);
