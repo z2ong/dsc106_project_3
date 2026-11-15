@@ -5,7 +5,7 @@ const mapHeight = 360;
 
 const margin = { top: 25, right: 100, bottom: 45, left: 60 };
 const width = 860 - margin.left - margin.right;
-const height = 360 - margin.top - margin.bottom;
+const height = 450 - margin.top - margin.bottom;
 
 const mapSvg = d3.select("#map-container")
     .append("svg")

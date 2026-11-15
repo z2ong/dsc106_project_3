@@ -317,3 +317,18 @@ header .subtitle {
         grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
     }
 }
+
+@media (min-width: 1050px) {
+    .results-grid {
+        align-items: stretch;
+    }
+
+    .results-grid th,
+    .results-grid td {
+        padding: 5px 8px;
+    }
+
+    .results-grid td {
+        white-space: nowrap;
+    }
+}
