@@ -96,49 +96,283 @@ console.table({
 function renderComparison() {
     const start = Number(periodSelect.property("value"));
     const end = start + 19;
-
-    const periodRows = data.filter(d => d.year >= start && d.year <= end);
-const rowsByRegion = d3.group(periodRows, d => d.region);
-
-const results = Array.from(rowsByRegion, ([region, rows]) => {
-    const averageFor = scenario => d3.mean(
-        rows.filter(d => d.scenario === scenario),
-        d => d.tas_anomaly
+    const periodRows = data.filter(
+        d => d.year >= start && d.year <= end
     );
+    const rowsByRegion = d3.group(
+        periodRows,
+        d => d.region
+    );
+    const results = Array.from(
+        rowsByRegion,
+        ([region, rows]) => {
+            const averageFor = scenario =>
+                d3.mean(
+                    rows.filter(
+                        d => d.scenario === scenario
+                    ),
+                    d => d.tas_anomaly
+                );
+            const lower = averageFor("ssp126");
+            const higher = averageFor("ssp585");
+            return {
+                region,
+                lower,
+                higher,
+                gap: higher - lower
+            };
+        }
+    );
+    results.sort((a, b) => b.gap - a.gap);
+    const margin = {
+        top: 35,
+        right: 85,
+        bottom: 55,
+        left: 125
+    };
+    const chartWidth = 540;
+    const rowHeight = 44;
+    const chartHeight = results.length * rowHeight;
+    const svgWidth = chartWidth + margin.left + margin.right;
+    const svgHeight = chartHeight + margin.top + margin.bottom;
 
-    const lower = averageFor("ssp126");
-    const higher = averageFor("ssp585");
+    d3.select("#comparison-chart")
+        .selectAll("*")
+        .remove();
+    const svg = d3
+        .select("#comparison-chart")
+        .append("svg")
+        .attr(
+            "viewBox",
+            `0 0 ${svgWidth} ${svgHeight}`
+        )
+        .attr("class", "comparison-svg");
+    const chart = svg
+        .append("g")
+        .attr(
+            "transform",
+            `translate(${margin.left},${margin.top})`
+        );
+    const x = d3
+        .scaleLinear()
+        .domain([
+            0,
+            d3.max(results, d => d.higher)
+        ])
+        .nice()
+        .range([0, chartWidth]);
+    const y = d3
+        .scaleBand()
+        .domain(results.map(d => d.region))
+        .range([0, chartHeight])
+        .padding(0.3);
+    chart
+        .append("g")
+        .attr(
+            "transform",
+            `translate(0,${chartHeight})`
+        )
+        .call(
+            d3.axisBottom(x)
+                .ticks(5)
+        );
+    chart
+        .append("text")
+        .attr("x", chartWidth / 2)
+        .attr("y", chartHeight + 40)
+        .attr("text-anchor", "middle")
+        .attr("class", "comparison-axis-label")
+        .text("Average temperature anomaly (°C)");
+    chart
+        .append("g")
+        .call(
+            d3.axisLeft(y)
+                .tickSize(0)
+        )
+        .call(g =>
+            g.select(".domain").remove()
+        );
+    const row = chart
+        .selectAll(".dumbbell-row")
+        .data(results, d => d.region)
+        .join("g")
+        .attr("class", d =>
+            d.region === currentRegion
+                ? "dumbbell-row active"
+                : "dumbbell-row"
+        );
+    row
+        .append("line")
+        .attr("class", "dumbbell-line")
+        .attr("x1", d => x(d.lower))
+        .attr("x2", d => x(d.higher))
+        .attr(
+            "y1",
+            d => y(d.region) + y.bandwidth() / 2
+        )
+        .attr(
+            "y2",
+            d => y(d.region) + y.bandwidth() / 2
+        );
+    row
+        .append("circle")
+        .attr("class", "dumbbell-dot lower-dot")
+        .attr("cx", d => x(d.lower))
+        .attr(
+            "cy",
+            d => y(d.region) + y.bandwidth() / 2
+        )
+        .attr("r", 7);
+    row
+        .append("circle")
+        .attr("class", "dumbbell-dot higher-dot")
+        .attr("cx", d => x(d.higher))
+        .attr(
+            "cy",
+            d => y(d.region) + y.bandwidth() / 2
+        )
+        .attr("r", 7);
+    row
+        .append("text")
+        .attr("class", "gap-label")
+        .attr(
+            "x",
+            d => x(d.higher) + 10
+        )
+        .attr(
+            "y",
+            d => y(d.region) + y.bandwidth() / 2
+        )
+        .attr("dy", "0.35em")
+        .text(
+            d => `+${d.gap.toFixed(2)}`
+        );
+    row
+        .append("rect")
+        .attr("class", "dumbbell-hitbox")
+        .attr("x", 0)
+        .attr(
+            "y",
+            d => y(d.region)
+        )
+        .attr("width", chartWidth)
+        .attr(
+            "height",
+            y.bandwidth()
+        )
+        .attr("fill", "transparent")
+        .style("cursor", "pointer")
+        .on("click", (_event, d) => {
+            selectRegion(d.region);
+        })
+        .on("mouseover", function(event, d) {
+            const parentRow =
+                d3.select(this.parentNode);
+            parentRow.classed(
+                "hovered",
+                true
+            );
+            tooltip
+                .html(`
+                    <strong>${d.region}</strong><br>
+                    Projection period:
+                    ${start}–${end}<br><br>
 
-    return { region, lower, higher, gap: higher - lower };
-});
+                    <span style="color:#FF8C00">
+                        Lower emissions (SSP1-2.6):
+                    </span>
+                    <strong>
+                        ${d.lower.toFixed(2)} °C
+                    </strong><br>
 
-results.sort((a, b) => b.gap - a.gap);
+                    <span style="color:#db5d9c">
+                        Higher emissions (SSP5-8.5):
+                    </span>
+                    <strong>
+                        ${d.higher.toFixed(2)} °C
+                    </strong><br>
 
-const tableRows = d3.select("#comparison-rows")
-    .selectAll("tr")
-    .data(results, d => d.region)
-    .join("tr");
-
-tableRows.selectAll("th")
-    .data(d => [d.region])
-    .join("th")
-    .attr("scope", "row")
-    .selectAll("button")
-.data(region => [region])
-.join("button")
-.attr("type", "button")
-.text(region => region)
-.on("click", (_event, region) => selectRegion(region));
-
-tableRows.selectAll("td")
-    .data(d => [d.lower, d.higher, d.gap])
-    .join("td")
-    .text(d => d.toFixed(2));
+                    Scenario gap:
+                    <strong>
+                        ${d.gap.toFixed(2)} °C
+                    </strong>
+                `)
+                .style(
+                    "left",
+                    `${event.pageX + 15}px`
+                )
+                .style(
+                    "top",
+                    `${event.pageY - 20}px`
+                )
+                .style("opacity", 1);
+        })
+        .on("mousemove", function(event) {
+            tooltip
+                .style(
+                    "left",
+                    `${event.pageX + 15}px`
+                )
+                .style(
+                    "top",
+                    `${event.pageY - 20}px`
+                );
+        })
+        .on("mouseout", function() {
+            const parentRow =
+                d3.select(this.parentNode);
+            parentRow.classed(
+                "hovered",
+                false
+            );
+            tooltip
+                .style("opacity", 0);
+        });
+    const legend = svg
+        .append("g")
+        .attr(
+            "transform",
+            `translate(${margin.left},10)`
+        );
+    const legendItems = [
+        {
+            label: "Lower emissions",
+            className: "lower-dot"
+        },
+        {
+            label: "Higher emissions",
+            className: "higher-dot"
+        }
+    ];
+    const legendGroups = legend
+        .selectAll(".comparison-legend-item")
+        .data(legendItems)
+        .join("g")
+        .attr(
+            "class",
+            "comparison-legend-item"
+        )
+        .attr(
+            "transform",
+            (_d, i) =>
+                `translate(${i * 145},0)`
+        );
+    legendGroups
+        .append("circle")
+        .attr("class", d =>
+            `dumbbell-dot ${d.className}`
+        )
+        .attr("cx", 6)
+        .attr("cy", 6)
+        .attr("r", 5);
+    legendGroups
+        .append("text")
+        .attr("x", 17)
+        .attr("y", 10)
+        .text(d => d.label);
 }
-
 periodSelect.on("change", renderComparison);
 renderComparison();
-
         const countries = topojson.feature(worldData, worldData.objects.countries);
         mapSvg.append("g")
             .selectAll("path")
@@ -146,7 +380,6 @@ renderComparison();
             .join("path")
             .attr("class", "land")
             .attr("d", geoPath);
-
         const regionPaths = mapSvg.append("g")
             .selectAll("path")
             .data(regionFeatures)
@@ -161,12 +394,12 @@ renderComparison();
                     .style("top", (event.pageY - 25) + "px");
             })
             .on("mouseout", () => tooltip.transition().duration(200).style("opacity", 0));
-
-        function selectRegion(region) {
+function selectRegion(region) {
     currentRegion = region;
     regionPaths.classed("active", d => d.properties.name === region);
     d3.select("#chart-title").text(`2. Temperature Anomaly Trajectory: ${region}`);
     updateChart(data);
+    renderComparison();
 }
         mapSvg.append("g")
             .selectAll("text")

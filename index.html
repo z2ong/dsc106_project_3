@@ -63,9 +63,9 @@
         </div>
     </fieldset>
 </div>
-            <div id="chart-container"></div>
+         <div id="chart-container"></div>
         </section>
-        <section class="vis-card">
+<section class="vis-card">
     <h2>Compare Regional Warming</h2>
 
     <label for="comparison-period">Projection period</label>
@@ -73,19 +73,14 @@
         <option value="2081">2081–2100</option>
         <option value="2041">2041–2060</option>
     </select>
+    
+    <p class="comparison-description">
+        Average scenario gap:
+        Higher emissions − Lower emissions (°C)
+    </p>
 
-    <table>
-    <caption>Average temperature anomaly and scenario gap (°C)</caption>
-    <thead>
-        <tr>
-            <th scope="col">Region</th>
-            <th scope="col">Lower emissions</th>
-            <th scope="col">Higher emissions</th>
-            <th scope="col">Gap</th>
-        </tr>
-    </thead>
-    <tbody id="comparison-rows"></tbody>
-</table>
+    <div id="comparison-chart"></div>
+          
 </section>
  </div>
     </main>
@@ -107,10 +102,10 @@
             We sourced our data from the CMIP6 climate dataset and processed the historical and projected temperature data by filtering relevant latitude and longitude ranges for each region. We calculated regional temperature anomalies relative to the 1850–1900 historical baseline and organized the data so that it could be used consistently across the map, line chart, and comparison table.
             </p>
             <p>
-            Our team divided the work across the main components of the project. <strong>Zach</strong> built the overall website framework and implemented the main map and temperature anomaly line chart. He developed the core interaction that connects regional selection on the map with the corresponding line plot. He also contributed to write-up section. <strong>May</strong> added the regional comparison table, improved the overall page styling, and implemented several of the dropdown and filtering features that allow users to change the projection period and scenario view. <strong>Yimeng</strong> worked on the written explanation and design rationale, and also helped refine and optimize the plot interactions so that the visualization was easier to explore and interpret.
+            Our team divided the work across the main components of the project. <strong>Zach</strong> built the overall website framework and implemented the main map and temperature anomaly line chart. He developed the core interaction that connects regional selection on the map with the corresponding line plot. He also contributed to write-up section. <strong>May</strong> added the regional comparison table, improved the overall page styling, and implemented several of the dropdown and filtering features that allow users to change the projection period and scenario view. <strong>Yimeng</strong> worked on the written explanation and design rationale, changing the comparison table to dumbbell chart, and also helped refine and optimize the plot interactions so that the visualization was easier to explore and interpret.
             </p>
             <p>
-            Our development process was iterative: we first built the major visual components, then connected the interactions and added comparison features, and finally refined the styling and usability. The most time-consuming parts were deciding how to present the climate data without overwhelming the user, coordinating the interactions between components, and improving the final visual design. Overall, the project required collaboration across data processing, visualization design, interaction development, and webpage styling.
+            We first built the major visual components, then added in interactions and comparison features, while at the same time refined the styling. The most time-consuming parts were deciding how to build the map plot, as well as presenting the climate data without overwhelming the user. We spent an average of 4 hours per person on this visualization project.
             </p>
     </section>
 

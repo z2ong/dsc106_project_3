@@ -304,6 +304,7 @@ header .subtitle {
     max-width: none;
     min-width: 0;
     margin: 0;
+    padding: 20px 18px;
 }
 
 #chart-container svg {
@@ -339,4 +340,143 @@ main > .vis-card,
     width: min(1200px, calc(100% - 32px));
     max-width: none;
     margin-inline: auto;
+}
+
+/* ----------------------------
+   Regional comparison dumbbell chart
+----------------------------- */
+
+.comparison-description {
+    margin: 4px 0 12px;
+    color: #486064;
+    font-size: 0.9rem;
+}
+
+#comparison-chart {
+    width: 100%;
+    margin-top: 8px;
+}
+
+.comparison-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+.comparison-axis-label {
+    fill: #486064;
+    font-size: 13px;
+}
+
+
+/* Connecting line */
+
+.dumbbell-line {
+    stroke: #b8c7c3;
+    stroke-width: 5px;
+    stroke-linecap: round;
+
+    transition:
+        stroke 0.18s ease,
+        stroke-width 0.18s ease,
+        opacity 0.18s ease;
+}
+
+
+/* Dots */
+
+.dumbbell-dot {
+    stroke: white;
+    stroke-width: 1.5px;
+
+    transition:
+        r 0.18s ease,
+        stroke-width 0.18s ease,
+        opacity 0.18s ease;
+}
+
+
+/* SSP1-2.6 */
+
+.lower-dot {
+    fill: #FF8C00;
+}
+
+
+/* SSP5-8.5 */
+
+.higher-dot {
+    fill: #db5d9c;
+}
+
+
+/* Gap value shown on the right */
+
+.gap-label {
+    fill: #486064;
+    font-size: 13px;
+    font-weight: 600;
+    pointer-events: none;
+}
+
+
+/* ----------------------------
+   Hover
+----------------------------- */
+
+.dumbbell-row.hovered .dumbbell-line {
+    stroke: #6f8f87;
+    stroke-width: 5px;
+}
+
+.dumbbell-row.hovered .dumbbell-dot {
+    stroke: #173b38;
+    stroke-width: 2px;
+}
+
+
+/* ----------------------------
+   Selected region
+----------------------------- */
+
+.dumbbell-row.active .dumbbell-line {
+    stroke: #115742;
+    stroke-width: 6px;
+}
+
+.dumbbell-row.active .dumbbell-dot {
+    stroke: #115742;
+    stroke-width: 3px;
+}
+
+.dumbbell-row.active .gap-label {
+    fill: #115742;
+    font-weight: 700;
+}
+
+
+/* ----------------------------
+   Axis
+----------------------------- */
+
+#comparison-chart .tick text {
+    fill: #294749;
+    font-size: 13px;
+}
+
+#comparison-chart .tick line {
+    stroke: #d6e2de;
+}
+
+#comparison-chart .domain {
+    stroke: #a8c4bb;
+}
+
+
+/* Legend */
+
+.comparison-legend-item text {
+    fill: #486064;
+    font-size: 12px;
 }
