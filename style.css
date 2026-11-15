@@ -178,3 +178,55 @@ header .subtitle {
 #comparison-rows button:focus-visible {
     background: #cde6dd;
 }
+
+header {
+    text-align: center;
+}
+
+header .subtitle {
+    margin-inline: auto;
+}
+
+@media (min-width: 800px) {
+    header h1 {
+        white-space: nowrap;
+    }
+
+    header .subtitle {
+        max-width: none;
+        white-space: nowrap;
+    }
+}
+
+.team-byline {
+    margin: 12px 0 0;
+    color: #c7ddd6;
+    font-size: 0.9rem;
+}
+
+.vis-card label {
+    color: #294749;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.vis-card select {
+    margin: 0 12px 10px 4px;
+    padding: 8px 12px;
+    border: 1px solid #a8c4bb;
+    border-radius: 8px;
+    background-color: #f4faf7;
+    color: #173b38;
+    font: inherit;
+    cursor: pointer;
+}
+
+.vis-card select:hover {
+    border-color: #43877a;
+    background-color: #eaf5ef;
+}
+
+.vis-card select:focus-visible {
+    outline: 2px solid #147365;
+    outline-offset: 3px;
+}
