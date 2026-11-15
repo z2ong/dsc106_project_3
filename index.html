@@ -40,6 +40,28 @@
 </select>
             <div id="chart-container"></div>
         </section>
+        <section class="vis-card">
+    <h2>Compare Regional Warming</h2>
+
+    <label for="comparison-period">Projection period</label>
+    <select id="comparison-period">
+        <option value="2081">2081–2100</option>
+        <option value="2041">2041–2060</option>
+    </select>
+
+    <table>
+    <caption>Average temperature anomaly and scenario gap (°C)</caption>
+    <thead>
+        <tr>
+            <th scope="col">Region</th>
+            <th scope="col">Lower emissions</th>
+            <th scope="col">Higher emissions</th>
+            <th scope="col">Gap</th>
+        </tr>
+    </thead>
+    <tbody id="comparison-rows"></tbody>
+</table>
+</section>
     </main>
 
     <section id="writeup">

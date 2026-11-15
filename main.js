@@ -71,6 +71,74 @@ async function init() {
             d.year = +d.year;
             d.tas_anomaly = +d.tas_anomaly;
         });
+        
+        const periodRows = data.filter(d =>
+    d.region === "North America" &&
+    d.year >= 2081 &&
+    d.year <= 2100
+);
+
+const averageFor = scenario => d3.mean(
+    periodRows.filter(d => d.scenario === scenario),
+    d => d.tas_anomaly
+);
+
+const lower = averageFor("ssp126");
+const higher = averageFor("ssp585");
+
+console.table({
+    lower: lower.toFixed(2),
+    higher: higher.toFixed(2),
+    gap: (higher - lower).toFixed(2)
+});
+    
+    const periodSelect = d3.select("#comparison-period");
+
+function renderComparison() {
+    const start = Number(periodSelect.property("value"));
+    const end = start + 19;
+
+    const periodRows = data.filter(d => d.year >= start && d.year <= end);
+const rowsByRegion = d3.group(periodRows, d => d.region);
+
+const results = Array.from(rowsByRegion, ([region, rows]) => {
+    const averageFor = scenario => d3.mean(
+        rows.filter(d => d.scenario === scenario),
+        d => d.tas_anomaly
+    );
+
+    const lower = averageFor("ssp126");
+    const higher = averageFor("ssp585");
+
+    return { region, lower, higher, gap: higher - lower };
+});
+
+results.sort((a, b) => b.gap - a.gap);
+
+const tableRows = d3.select("#comparison-rows")
+    .selectAll("tr")
+    .data(results, d => d.region)
+    .join("tr");
+
+tableRows.selectAll("th")
+    .data(d => [d.region])
+    .join("th")
+    .attr("scope", "row")
+    .selectAll("button")
+.data(region => [region])
+.join("button")
+.attr("type", "button")
+.text(region => region)
+.on("click", (_event, region) => selectRegion(region));
+
+tableRows.selectAll("td")
+    .data(d => [d.lower, d.higher, d.gap])
+    .join("td")
+    .text(d => d.toFixed(2));
+}
+
+periodSelect.on("change", renderComparison);
+renderComparison();
 
         const countries = topojson.feature(worldData, worldData.objects.countries);
         mapSvg.append("g")
@@ -86,13 +154,8 @@ async function init() {
             .join("path")
             .attr("class", d => `region-box ${d.properties.name === currentRegion ? "active" : ""}`)
             .attr("d", geoPath)
-            .on("click", (event, d) => {
-                currentRegion = d.properties.name;
-                regionPaths.classed("active", r => r.properties.name === currentRegion);
-                d3.select("#chart-title").text(`2. Temperature Anomaly Trajectory: ${currentRegion}`);
-                updateChart(data);
-            })
-            .on("mouseover", (event, d) => {
+            .on("click", (_event, d) => selectRegion(d.properties.name))
+.on("mouseover", (event, d) => {
                 tooltip.transition().duration(100).style("opacity", 0.95);
                 tooltip.html(`Click to view <strong>${d.properties.name}</strong>`)
                     .style("left", (event.pageX + 10) + "px")
@@ -100,6 +163,12 @@ async function init() {
             })
             .on("mouseout", () => tooltip.transition().duration(200).style("opacity", 0));
 
+        function selectRegion(region) {
+    currentRegion = region;
+    regionPaths.classed("active", d => d.properties.name === region);
+    d3.select("#chart-title").text(`2. Temperature Anomaly Trajectory: ${region}`);
+    updateChart(data);
+}
         mapSvg.append("g")
             .selectAll("text")
             .data(regionFeatures)
