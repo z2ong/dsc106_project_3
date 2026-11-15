@@ -112,8 +112,8 @@ async function init() {
             })
             .text(d => d.properties.name);
         
-            d3.select("#scenario-filter").on("change", () => {
-            updateChart(data);
+            d3.selectAll("#scenario-filter, #time-span").on("change", () => {
+    updateChart(data);
         });
         updateChart(data);
 
@@ -126,10 +126,16 @@ function updateChart(data) {
     const regionData = data.filter(d => d.region === currentRegion);
     const selectedScenario = d3.select("#scenario-filter").property("value");
 
+const [firstYear, lastYear] = d3.extent(regionData, d => d.year);
+const projectionsOnly = d3.select("#time-span").property("value") === "future";
+const startYear = projectionsOnly ? 2015 : firstYear;
+
 const visibleRows = regionData.filter(d =>
-    d.scenario === "historical" ||
-    selectedScenario === "both" ||
-    d.scenario === selectedScenario
+    d.year >= startYear && (
+        d.scenario === "historical" ||
+        selectedScenario === "both" ||
+        d.scenario === selectedScenario
+    )
 );
 
 const nestedData = d3.group(visibleRows, d => d.scenario);
@@ -137,7 +143,7 @@ const nestedData = d3.group(visibleRows, d => d.scenario);
     chartSvg.selectAll(".rendered-element").remove();
 
     const x = d3.scaleLinear()
-        .domain(d3.extent(regionData, d => d.year))
+        .domain([startYear, lastYear])
         .range([0, width]);
 
     const y = d3.scaleLinear()
