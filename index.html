@@ -69,7 +69,31 @@
 
     <section id="writeup">
         <h2>Design Rationale & Development Process</h2>
-        <p>This visualization . . .</p>
+        <p>
+            Our team's focus question was, how does projected warming differ across selected regions under lower- and higher-emissions scenarios? 
+            Our main motivation behind developing a visualization for this question, was to highlight clearly the historical climate data and climate 
+            prediction data trends, filtering regionally in a manner that was easy to follow. We observed that climate change isn't just a universal increase 
+            in temperature, but is a non-uniform difference in regional climate. If you skim through our visualization you will see that the Artic has a significant 
+            difference in predicted temperature anomaly comparatively to other regions regardless of low or high emission scenarios.
+        </p>
+        <p>
+            Instead of making the user select regions through a simple drop down, we wanted to make it more interactive by adding map for users to
+            select regions for individual filtering. Users can click on the designated boxes meant to represent each region making the analysis of
+            climate data more engaging. Just below the map, you will see the highlighted temperature anomaly line graph (filterable) highlighting the 
+            difference of that region's average temperature from the baseline average we calculated from the historical 1850-1900 climate data. We used
+            line charts to more clearly show the continuous trend and the future difference of in predicted scenarios based on levels of emission. For 
+            the color palette, we decided to use a lightish monotone blue for historical data, a darker orange for ssp126 data, and a magenta for ssp585 data 
+            to highlight the differences in each scenario. We figured that since blue and orange are on opposing side of the color wheel they would make 
+            good contrast. On top of that magenta was between them so our color palette was both visually appealing, but also differing enough to 
+            combat color blindess, at least specifically the most common one, red-green blindness.
+        </p>
+        <p>
+            We sourced our data from the CMIP6 dataset aggregating and filtering for the specific historical and projection data, including longitudinal,
+            temperature, and latitudinal data. We formed our visualization by first thinking of how to allow users to select the regions they wanted to see.
+            We then highlighed the differences through line charts for simple viewing. To conclude our spoon feeding of information, we implemented a table
+            to compare specific pockets of years worth of simulated averages of regional temperature data in case the line graphs weren't specific enough,
+            despite the use of a tooltip to show the year's temperature anomaly data.
+        </p>
     </section>
 
 
